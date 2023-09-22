@@ -1,0 +1,172 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<meta charset="utf-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1">
+	<title>orders</title>
+</head>
+<body>
+<div class="navigation_menu">
+<a href="{{url_for('users_info_all',sorted_by = 'id')}}">Users</a>
+<a href="{{url_for('orders_info')}}">Orders</a>
+<a href="{{url_for('get_manager_panel')}}">Managers</a>
+<a href="{{url_for('get_parsing_panel')}}">Basket menu</a>
+<a href="{{url_for('get_discount_panel')}}">Discounts</a>
+<a href="{{url_for('start_page')}}">Start page</a>
+</div>
+
+<div id="url_for_value" style="display: none;" data-url="{{ url_for('edit_order') }}"></div>
+<div id="url_for_delete" style="display: none;" data-url="{{ url_for('delete_order')}}"></div>
+
+<h2>{{context.order.Order.id}} <a href="{{url_for('user_info', user=context.order.Order.client)}}">{{ context.order.Order.client }}</a>
+{{context.order.Order.type}} {{context.order.OrderStatus.order_price}}</h2>
+<button id="order_edit_button">edit order</button>
+<div id="container_edit_form"></div>
+<br>
+{%for message in context.messages%}
+{{message.id}} {{message.message_body}}
+<br>
+{%endfor%}
+<script>
+	var urlForPostEdit = document.getElementById("url_for_value").getAttribute("data-url");
+	// Здесь вы можете использовать значение urlForValue по вашему усмотрению//
+	var OrderId = {{context.order.Order.id|tojson}}
+	var OrderType = {{context.order.Order.type|tojson}}
+	var OrderMoney = {{context.order.OrderStatus.order_price|tojson}}
+	var OrderManager= {{context.order.OrderStatus.manager_id|tojson}}
+	var urlForOrderDelete = document.getElementById("url_for_delete").getAttribute("data-url");
+  	// Обработчик события нажатия на кнопку "edit order"
+  	document.getElementById("order_edit_button").addEventListener("click", function() {
+    // Создание элементов формы
+    var form = document.createElement("form");
+    form.setAttribute("id", "edit_form");
+    form.setAttribute("action",urlForPostEdit);
+    form.setAttribute("method","POST");
+    form.setAttribute("enctype","multipart/form-data");
+
+// Выпадающий список
+    var selectOrderType = document.createElement("select");
+	selectOrderType.setAttribute("name", "order_type");
+
+	var defaultOption = document.createElement("option");
+	defaultOption.setAttribute("value", OrderType);
+	defaultOption.innerText = OrderType;
+	selectOrderType.appendChild(defaultOption);
+
+	var optionTradeinn = document.createElement("option");
+	optionTradeinn.setAttribute("value", "TRADEINN"); 
+	optionTradeinn.innerText = "TRADEINN";
+	selectOrderType.appendChild(optionTradeinn);
+
+	var optionKazLinks = document.createElement("option");
+	optionKazLinks.setAttribute("value", "KAZ_ORDER_LINKS"); 
+	optionKazLinks.innerText = "KAZ_ORDER_LINKS";
+	selectOrderType.appendChild(optionKazLinks);
+
+	var optionPayment = document.createElement("option");
+	optionPayment.setAttribute("value", "PAYMENT"); 
+	optionPayment.innerText = "PAYMENT";
+	selectOrderType.appendChild(optionPayment);
+
+	var optionKazCabinet = document.createElement("option");
+	optionKazCabinet.setAttribute("value", "KAZ_ORDER_CABINET"); 
+	optionKazCabinet.innerText = "KAZ_ORDER_CABINET";
+	selectOrderType.appendChild(optionKazCabinet);
+
+
+	var options = selectOrderType.options;
+	for (var i = 1; i < options.length; i++) {
+	  if (options[i].value === OrderType) {
+	    selectOrderType.removeChild(options[i]);
+	    break;
+	  }
+	}
+
+// Поля Денег и Менеджера
+
+    var orderMoneyInput = document.createElement("input");
+    orderMoneyInput.setAttribute("type", "text");
+    orderMoneyInput.setAttribute("name", "order_price");
+    orderMoneyInput.setAttribute("placeholder", OrderMoney);
+    
+    var orderManagerInput = document.createElement("input");
+    orderManagerInput.setAttribute("type", "text");
+    orderManagerInput.setAttribute("name", "manager_id");
+    orderManagerInput.setAttribute("placeholder", OrderManager);
+
+    form.appendChild(selectOrderType);
+    form.appendChild(orderMoneyInput);
+    form.appendChild(orderManagerInput);
+
+// Скрытые поля
+
+    var hiddenOrderType = document.createElement("input");
+	hiddenOrderType.setAttribute("type", "hidden");
+	hiddenOrderType.setAttribute("name", "order_type_before");
+	hiddenOrderType.setAttribute("value", OrderType);
+
+	var hiddenMoney = document.createElement("input");
+	hiddenMoney.setAttribute("type", "hidden");
+	hiddenMoney.setAttribute("name", "order_money_before");
+	hiddenMoney.setAttribute("value", OrderMoney);
+
+	var hiddenManager = document.createElement("input");
+	hiddenManager.setAttribute("type", "hidden");
+	hiddenManager.setAttribute("name", "manager_id_before");
+	hiddenManager.setAttribute("value", OrderManager);
+
+	var hiddenOrderId = document.createElement("input");
+	hiddenOrderId.setAttribute("type","hidden");
+	hiddenOrderId.setAttribute("name", "order_id");
+	hiddenOrderId.setAttribute("value",OrderId);
+
+	form.appendChild(hiddenOrderType);
+	form.appendChild(hiddenMoney);
+	form.appendChild(hiddenManager);
+	form.appendChild(hiddenOrderId);
+
+    var submitButton = document.createElement("button");
+    submitButton.setAttribute("type", "submit");
+    submitButton.textContent = "Submit";
+
+    var cancelButton = document.createElement("button");
+    cancelButton.setAttribute("type", "button");
+    cancelButton.textContent = "Cancel";
+    cancelButton.addEventListener("click", function() {
+
+      // Удаление формы при нажатии на кнопку "Cancel"
+    	var form = document.getElementById("edit_form");
+    	var deleteButton = document.getElementById("delete_button");
+    	if (form) {
+    		form.remove();
+      	}
+      if (deleteButton) {
+        deleteButton.remove();
+      	}
+    });
+    var deleteButton = document.createElement("button");
+    deleteButton.setAttribute("type", "button");
+    deleteButton.textContent = "Delete Order";
+    deleteButton.addEventListener("click", function() {
+    	// Действия по удалению заказа
+    	var form = document.getElementById("edit_form");
+    	form.setAttribute("action",urlForOrderDelete);    	
+    	form.submit();
+    	});
+    
+    // Очистка содержимого контейнера перед добавлением формы
+    var container = document.getElementById("container_edit_form");
+    container.innerHTML = "";
+
+    // Добавление формы в контейнер
+    form.appendChild(submitButton);
+    form.appendChild(deleteButton);
+    form.appendChild(cancelButton);
+    container.appendChild(form);
+});
+
+
+
+</script>
+</body>
+</html>

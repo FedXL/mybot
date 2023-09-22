@@ -1,0 +1,32 @@
+<!-- base.html -->
+<!DOCTYPE html>
+<html>
+<head>
+    <title>{% block title %}Default Title{% endblock %}</title>
+    {% block head %}{% endblock %}
+</head>
+<body>
+    <div id="header">
+        {% block header %}
+<div class="navigation_menu">
+<a href="{{url_for('users_info_all',sorted_by = 'id')}}">Users</a>
+<a href="{{url_for('orders_info')}}">Orders</a>
+<a href="{{url_for('get_manager_panel')}}">Managers</a>
+<a href="{{url_for('get_parsing_panel')}}">Basket menu</a>
+<a href="{{url_for('get_discount_panel')}}">Discounts</a>
+<a href="{{url_for('start_page')}}">Start page</a>
+</div>
+        {% endblock %}
+    </div>
+    <div id="content">
+        {% block content %}
+            hey
+        {% endblock %}
+    </div>
+    <div id="footer">
+        {% block footer %}
+            hey
+        {% endblock %}
+    </div>
+</body>
+</html>

@@ -1,0 +1,115 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+
+    <style>
+        table {
+  border-collapse: collapse;
+
+}
+
+th, td {
+  text-align: left;
+  padding: 8px;
+  border: 1px solid #ddd;
+}
+
+th {
+  background-color: #4CAF50;
+  color: white;
+}
+
+tr:hover {
+  background-color: #f5f5f5;
+}
+
+a {
+  text-decoration: none;
+  color: #000;
+}
+
+a:hover {
+  text-decoration: underline;
+}
+
+button:hover {
+    background-color: #3e8e41;
+  }
+
+  button {
+      background-color: #87CEFA;
+      color: white;
+      padding: 10px;
+      margin: 5px;
+      border-radius: 5px;
+      border: none;
+      cursor: pointer;
+   }
+
+.redd {
+  background-color: #FF6400;
+}
+
+    </style>
+
+</head>
+<body>
+<div class="navigation_menu">
+<a href="{{url_for('users_info_all',sorted_by = 'id')}}">Users</a>
+<a href="{{url_for('orders_info')}}">Orders</a>
+<a href="{{url_for('get_manager_panel')}}">Managers</a>
+<a href="{{url_for('get_parsing_panel')}}">Basket menu</a>
+<a href="{{url_for('get_discount_panel')}}">Discounts</a>
+<a href="{{url_for('start_page')}}">Start page</a>
+</div>
+<br>
+<br>
+<table>
+    <thead>
+    <tr>
+        <td>
+            Manager
+        </td>
+        <td>
+            id
+        </td>
+        <td>
+            On / OFF
+        </td>
+    </tr>
+    </thead>
+    <tbody>
+{% for manager in context%}
+{%if manager.is_active%}
+  <tr >
+   <td>
+    {{manager.short_name}}
+   </td>
+   <td>
+    {{manager.user_id}}
+   </td>
+   <td>
+    <button class='off_button' onclick="window.location.href='{{ url_for('manager_handler',id=manager.user_id, turn='TurnOff') }}'">Turn OFF</button>
+   </td>
+   </tr>
+{% elif not manager.is_active%}
+   <tr class='redd'>
+        <td>
+            {{manager.short_name}}
+        </td>
+        <td>
+            {{manager.user_id}}
+        </td>
+        <td>
+            <button class="on_button" onclick="window.location.href='{{ url_for('manager_handler',id=manager.user_id, turn='TurnOn') }}'">Turn ON</button>
+        </td>
+
+    </tr>        
+    {%endif%}
+    {%endfor%}
+    </tbody>
+</table>
+</body>
+</html>

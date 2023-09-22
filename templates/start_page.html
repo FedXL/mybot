@@ -1,0 +1,129 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Start Page</title>
+    <script src="https://cdn.anychart.com/releases/8.11.0/js/anychart-base.min.js" type="text/javascript"></script>
+    <style>
+        .total {
+  display: flex;
+  flex-direction: row;
+}
+    </style>
+</head>
+<body>
+<div class="navigation_menu">
+<a href="{{url_for('users_info_all',sorted_by = 'id')}}">Users</a>
+<a href="{{url_for('orders_info')}}">Orders</a>
+<a href="{{url_for('get_manager_panel')}}">Managers</a>
+<a href="{{url_for('get_parsing_panel')}}">Basket menu</a>
+<a href="{{url_for('get_discount_panel')}}">Discounts</a>
+<a href="{{url_for('start_page')}}">Start page</a>
+</div>
+
+{{value}}
+<br>
+<br>
+<h2> Tradeinn statistic </h2>
+<div class="total">
+<div id="total" style="width: 400px; height: 300px;"></div>
+    <div id="month_mistakes_chart" style="width: 600px; height: 300px;"></div>
+
+</div>
+<div class='total'>
+    <div id="month_count_chart" style="width: 1000px; height: 300px;"></div>
+</div>
+<div class="total"> 
+    <div id="month_count_kz_chart" style="width: 1000px; height: 300px;"></div>
+</div>
+<div class='total'>
+    <div id="month_money_chart" style="width: 1000px; height: 300px;"></div>
+</div>
+<script>
+  anychart.onDocumentLoad (function () {
+    let chart1 = anychart.pie();
+    let totalInfo = {{context.total_result|safe}};
+    chart1.data(totalInfo);
+    chart1.title("Summary total orders");
+    chart1.container("total");
+    chart1.draw();
+    let chart_mistakes = anychart.column();
+    chart_mistakes.yScale().stackMode("value");
+    
+    let MonthZeroData = {{context.month_zero_money|safe}};
+    let MonthBadPass = {{context.month_bad_pass|safe}};
+    let ErrorsParcing = {{context.month_errors|safe}};
+    console.log(MonthZeroData);
+    console.log(MonthBadPass);
+    console.log(ErrorsParcing);
+
+
+
+    let MonthZeroSeries = chart_mistakes.column(MonthZeroData);
+    MonthZeroSeries.name('Zero money orders');
+    let MonthBadSeries = chart_mistakes.column(MonthBadPass);
+    MonthBadSeries.name('Orders with invalid pass');
+    let ErrorsSeries = chart_mistakes.column(ErrorsParcing);
+    ErrorsSeries.name('Parsing Errors');
+    ErrorsSeries.color('red');
+
+
+    chart_mistakes.xAxis().title("Month");
+    chart_mistakes.yAxis().title("Count");
+    chart_mistakes.title("Mistakes");
+    chart_mistakes.container("month_mistakes_chart");
+    chart_mistakes.draw();
+    
+    let chart5 = anychart.column();
+    chart5.yScale().stackMode("value");
+    chart5.title("Summary Orders Tradeinn");
+
+    let MonthMoneyData = {{context.month_money|safe}};
+    let MonthCountData = {{context.month_count|safe}};
+    let MonthCountKZ = {{context.month_cont_KZ|safe}};
+    console.log('hey');
+    console.log(MonthCountKZ);
+    console.log(MonthCountData);
+    let MonthCountSeries = chart5.column(MonthCountData);
+    MonthCountSeries.name('Count');
+    
+
+    chart5.xAxis().title("Month");
+    chart5.yAxis().title("Value");
+    chart5.container("month_count_chart");
+    chart5.draw();
+
+    let chart6 = anychart.column();
+    let MonthMoneySeries = chart6.column(MonthMoneyData);
+    MonthMoneySeries.name('Money');
+    chart6.yScale().stackMode("value");
+    chart6.title("Summary money Tradeinn");
+    chart6.container('month_money_chart')
+    chart6.draw();
+
+    let chart7 = anychart.column();
+    chart7.yScale().stackMode("value");
+    chart7.title("Summary Orders KZ");
+
+    let MonthCountSeriesKZ = chart7.column(MonthCountKZ);
+    MonthCountSeriesKZ.name('Count');
+    MonthCountSeriesKZ.color('orange');
+    chart7.xAxis().title("Month");
+    chart7.yAxis().title("Value");
+    chart7.container("month_count_kz_chart");
+    chart7.draw();
+
+  });
+</script>
+
+
+<script>
+    window.addEventListener('load', function() {
+  const elementsToRemove = document.querySelectorAll('.anychart-credits');
+  elementsToRemove.forEach(function(element) {
+    element.remove();
+  });
+});
+</script>
+</body>
+</html>

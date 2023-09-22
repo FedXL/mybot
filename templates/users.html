@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>users</title>
+    <style>
+        table {
+  border-collapse: collapse; /* Объединение границ ячеек */
+  width: 100%; /* Ширина таблицы */
+                }                   
+
+    table td, table th {
+    border: 1px solid #000; /* Толщина и цвет границ ячеек */
+    padding: 8px; /* Отступы внутри ячеек */
+      }
+    </style>
+</head>
+<body>
+
+<h1>{{remark}}</h1>
+<div class="navigation_menu">
+<a href="{{url_for('users_info_all',sorted_by = 'id')}}">Users</a>
+<a href="{{url_for('orders_info')}}">Orders</a>
+<a href="{{url_for('get_manager_panel')}}">Managers</a>
+<a href="{{url_for('get_parsing_panel')}}">Basket menu</a>
+<a href="{{url_for('get_discount_panel')}}">Discounts</a>
+<a href="{{url_for('start_page')}}">Start page</a>
+</div>
+<table>
+    <thead>
+    <tr>
+        <td><a href="{{url_for('users_info_all',sorted_by = 'id')}}">user id</a></td>
+        <td><a href="{{url_for('users_info_all',sorted_by = 'name')}}">name</a></td>
+        <td><a href="{{url_for('users_info_all',sorted_by = 'second_name')}}">last name</a></td>
+        <td><a href="{{url_for('users_info_all',sorted_by = 'username')}}">username</a></td>
+    </tr>
+    </thead>
+<tbody style="border-radius: 1px;">
+{%for user in context%}
+<tr>
+    <td><a href="{{ url_for('user_info', user=user.user_id) }}">{{user.user_id}}</a></td>
+    <td>{{user.user_name}}</td>
+    <td>{{user.user_second_name}}</td>
+    <td>{{user.tele_username}}</td>
+</tr>
+
+{%endfor%}
+</tbody>
+</table>
+
+
+
+
+
+</body>
+</html>
